@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+
 const { stdout, exit } = process;
 
 fs.readFile(path.join(__dirname, 'text.txt'), 'utf-8', (err, data) => {
