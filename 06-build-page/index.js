@@ -15,10 +15,10 @@ async function generateHtml() {
   let index = await fs.readFile(path.join(__dirname, 'template.html'), 'utf8');
   const components = await fs.readdir(path.resolve(__dirname, 'components'), { withFileTypes: true });
   for (let i = 0; i < components.length; i += 1) {
-    const extName = new RegExp(path.extname(components[i].name));
-    const compName = components[i].name.replace(extName, '');
-    if (components[i].isFile() && path.extname(components[i].name) === '.html' && index.includes(`{{${compName}}}`)) {
-      const regExp = new RegExp(`{{${compName}}}`);
+    const extantion = new RegExp(path.extname(components[i].name));
+    const component = components[i].name.replace(extantion, '');
+    if (components[i].isFile() && path.extname(components[i].name) === '.html' && index.includes(`{{${component}}}`)) {
+      const regExp = new RegExp(`{{${component}}}`, 'g');
       const html = await fs.readFile(path.resolve(__dirname, 'components', components[i].name), 'utf8');
       index = index.replace(regExp, html);
     }
