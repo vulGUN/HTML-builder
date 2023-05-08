@@ -50,10 +50,10 @@ fs.readdir(path.resolve(__dirname, 'assets'), { withFileTypes: true }).then((dat
       fs.copyFile(src, dist);
     } else if (file.isDirectory()) {
       fs.mkdir(dist, { recursive: true });
-      fs.readdir(src).then((data2) => {
+      fs.readdir(src, { withFileTypes: true }).then((data2) => {
         for (let i = 0; i < data2.length; i += 1) {
-          const copySrc = path.resolve(src, data2[i]);
-          const copyDist = path.resolve(dist, data2[i]);
+          const copySrc = path.resolve(src, data2[i].name);
+          const copyDist = path.resolve(dist, data2[i].name);
           fs.writeFile(copyDist, '').then(() => fs.copyFile(copySrc, copyDist));
         }
       });
