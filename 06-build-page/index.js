@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 /* eslint-disable no-restricted-syntax */
 const path = require('path');
@@ -5,32 +6,26 @@ const fs = require('fs').promises;
 
 const pathToPD = path.resolve(__dirname, 'project-dist');
 
-// создаем index.html и заменяем в нем шаблонные теги
-async function processFile() {
-  try {
-    let index = await fs.readFile(path.join(__dirname, 'template.html'), 'utf8');
-    if (index.includes('{{header}}')) {
-      const header = await fs.readFile(path.resolve(__dirname, 'components', 'header.html'), 'utf8');
-      index = index.replace(/{{header}}/g, header);
-    }
-    if (index.includes('{{articles}}')) {
-      const articles = await fs.readFile(path.resolve(__dirname, 'components', 'articles.html'), 'utf8');
-      index = index.replace(/{{articles}}/g, articles);
-    }
-    if (index.includes('{{footer}}')) {
-      const footer = await fs.readFile(path.resolve(__dirname, 'components', 'footer.html'), 'utf8');
-      index = index.replace(/{{footer}}/g, footer);
-    }
-    await fs.writeFile(path.resolve(pathToPD, 'index.html'), index);
-  } catch (err) {
-    console.error(err);
-  }
-}
-processFile();
-
 // создаем папку project-dist и в ней папку assets
 fs.mkdir(pathToPD, { recursive: true });
 fs.mkdir(path.resolve(pathToPD, 'assets'), { recursive: true });
+
+// создаем index.html и заменяем в нем шаблонные теги
+async function generateHtml() {
+  let index = await fs.readFile(path.join(__dirname, 'template.html'), 'utf8');
+  const components = await fs.readdir(path.resolve(__dirname, 'components'), { withFileTypes: true });
+  for (let i = 0; i < components.length; i += 1) {
+    const extName = new RegExp(path.extname(components[i].name));
+    const compName = components[i].name.replace(extName, '');
+    if (components[i].isFile() && path.extname(components[i].name) === '.html' && index.includes(`{{${compName}}}`)) {
+      const regExp = new RegExp(`{{${compName}}}`);
+      const html = await fs.readFile(path.resolve(__dirname, 'components', components[i].name), 'utf8');
+      index = index.replace(regExp, html);
+    }
+  }
+  await fs.writeFile(path.resolve(pathToPD, 'index.html'), index);
+}
+generateHtml();
 
 // считываем папку styles, создаем style.css, записываем в него данные
 fs.readdir(path.resolve(__dirname, 'styles'), { withFileTypes: true }).then((files) => {
