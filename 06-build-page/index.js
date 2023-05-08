@@ -52,10 +52,9 @@ fs.readdir(path.resolve(__dirname, 'assets'), { withFileTypes: true }).then((dat
       fs.mkdir(dist, { recursive: true });
       fs.readdir(src).then((data2) => {
         for (let i = 0; i < data2.length; i += 1) {
-          const copySrc = path.join(src, data2[i]);
+          const copySrc = path.resolve(src, data2[i]);
           const copyDist = path.resolve(dist, data2[i]);
-          fs.writeFile(copyDist, '');
-          fs.copyFile(copySrc, copyDist);
+          fs.writeFile(copyDist, '').then(() => fs.copyFile(copySrc, copyDist));
         }
       });
     }
