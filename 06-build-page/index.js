@@ -46,8 +46,7 @@ fs.readdir(path.resolve(__dirname, 'assets'), { withFileTypes: true }).then((dat
     const src = path.resolve(__dirname, 'assets', file.name);
     const dist = path.resolve(pathToPD, 'assets', file.name);
     if (file.isFile()) {
-      fs.writeFile(dist, '');
-      fs.copyFile(src, dist);
+      fs.writeFile(dist, '').then(() => fs.copyFile(src, dist));
     } else if (file.isDirectory()) {
       fs.mkdir(dist, { recursive: true });
       fs.readdir(src, { withFileTypes: true }).then((data2) => {
