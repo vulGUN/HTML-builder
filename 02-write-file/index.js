@@ -10,12 +10,13 @@ fs.writeFile(filePath, '', (err) => {
 
 stdout.write('Здравствуйте, введите текст\n');
 stdin.on('data', (data) => {
-  fs.appendFile(filePath, data, (err) => {
-    if (err) throw err;
-    if (data.includes('exit')) {
-      exit();
-    }
-  });
+  if (data.includes('exit')) {
+    exit();
+  } else {
+    fs.appendFile(filePath, data, (err) => {
+      if (err) throw err;
+    });
+  }
 });
 process.on('SIGINT', () => {
   exit();
