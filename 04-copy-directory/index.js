@@ -13,10 +13,7 @@ fs.readdir(path.join(__dirname, 'files-copy')).then((files) => {
     for (let i = 0; i < data.length; i += 1) {
       const src = path.join(pathToFolder, data[i]);
       const dist = path.resolve(__dirname, 'files-copy', data[i]);
-      fs.writeFile(dist, '', (err) => {
-        if (err) throw err;
-      });
-      fs.copyFile(src, dist);
+      fs.writeFile(dist, '').then(() => fs.copyFile(src, dist));
     }
   });
 });
